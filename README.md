@@ -64,7 +64,7 @@ So, stop bickering, stop posturing, and enter the ring with SlashPay!
 ### Setup
  1. Install Lightning Polar and create a single lnd node: https://lightningpolar.com
  2. Clone the repo:
-    - `git clone https://github.com/synonymdev/slash-pay-demo && cd slash-pay-demo && npm i`
+    - `git clone https://github.com/synonymdev/slash-pay-demo-server && cd slash-pay-demo-server && npm i`
  3. Replace "CERT", "MACAROON" & "SOCKET" in `index.js` with "TLS Cert", "Admin Macaroon", & "GRPC Host" respectively from the "Connect" view of your Lightning Polar lnd node.
  4. Open a terminal and start the server with `node .`
  
