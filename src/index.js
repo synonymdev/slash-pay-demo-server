@@ -23,7 +23,6 @@ const generateInvoice = async ({ tokens, description }) => {
     const invoice = await lns.createInvoice({lnd, tokens, description});
     const error = !invoice?.request;
     const data = invoice?.request ?? 'Unable to retrieve an invoice at this time.';
-    console.log({error, data});
     return {error, data };
 }
 
