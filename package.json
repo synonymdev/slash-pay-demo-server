@@ -10,7 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "hackday-slashpay": "^1.0.0",
-    "ln-service": "^53.9.2"
+    "hackday-slashpay": "^1.4.0",
+    "ln-service": "^53.9.2",
+    "uuid": "^8.3.2"
   }
 }
