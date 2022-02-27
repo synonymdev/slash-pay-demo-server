@@ -1,5 +1,5 @@
 {
-  "name": "slash-pay-demo",
+  "name": "slash-pay-demo-server",
   "version": "0.0.1",
   "description": "",
   "main": "src/index.js",
@@ -10,7 +10,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@synonymdev/slashtags-common": "^0.2.1",
     "hackday-slashpay": "^1.0.0",
     "ln-service": "^53.9.2"
   }
