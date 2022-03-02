@@ -99,6 +99,8 @@ const runSubscribe = async (method, id, callback) => {
             data = await subscribeToInvoice(id, callback);
             break;
         case 'p2wpkh':
+        case 'p2sh':
+        case 'p2pkh':
             data = await subscribeToAddress(id, method, callback);
             break;
         default:
