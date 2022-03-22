@@ -3,9 +3,9 @@ import { readFileSync } from 'fs';
 import * as lns from 'ln-service';
 import { v4 as uuidv4 } from 'uuid';
 
-const CERT = '/Users/user/.polar/networks/1/volumes/lnd/alice/tls.cert';
-const MACAROON = '/Users/user/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon';
-const SOCKET = '127.0.0.1:10001';
+const CERT = '/Users/<Username>/Library/Application Support/Lnd/tls.cert';
+const MACAROON = '/Users/<Username>/Library/Application Support/Lnd/data/chain/bitcoin/mainnet/admin.macaroon';
+const SOCKET = '127.0.0.1:10009';
 
 const toB64 = (path) => readFileSync(path, { encoding: 'base64' });
 const { lnd } = lns.authenticatedLndGrpc({
@@ -13,6 +13,19 @@ const { lnd } = lns.authenticatedLndGrpc({
     macaroon: toB64(MACAROON),
     socket: SOCKET
 });
+
+/**
+ * @returns {Promise<{ data: any, id: string, error: boolean }>}
+ */
+const getWalletInfo = async () => {
+    try {
+        const res = await lns.getWalletInfo({lnd});
+        if (res) return { error: false, data: res, id: '' };
+        return { error: true, data: 'Error retrieving wallet info.', id: '' };
+    } catch (e) {
+        return { error: true, data: e, id: '' };
+    }
+};
 
 /**
  * Generates a bolt11 invoice from the lightning node.
@@ -25,7 +38,7 @@ const generateInvoice = async ({ tokens, description }) => {
     const error = !invoice?.request;
     const data = invoice?.request ?? 'Unable to retrieve an invoice at this time.';
     const id = error ? '' : invoice?.id;
-    return {error, data, id };
+    return { error, data, id };
 }
 
 /**
@@ -45,7 +58,10 @@ const subscribeToInvoice = async (invoiceIdHexString, callback) => {
     sub.on('invoice_updated', (data) => {
         //TODO: Ensure the proper amount has been received.
         if (data?.received > 0) {
-            callback({ orderId: uuidv4(), error: !data, data: data?.id });
+            const receipt = { orderId: uuidv4(), error: !data, data: data?.id };
+            callback(receipt);
+            console.log('\nReceipt:', receipt);
+            console.log('\n');
             sub.abort();
         }
     });
@@ -85,9 +101,6 @@ const runMethod = async (method, data) => {
             break;
 
     }
-    console.log('\n');
-    console.log('Receipt Response:', { method, ...response });
-    console.log('\n');
     return { method, ...response };
 }
 
@@ -119,6 +132,13 @@ const lnNodeResponse = async (data, onInvoice, onReceipt) => {
     }
 }
 const runSlashtagsPayServer = async () => {
+    const walletInfo = await getWalletInfo();
+    if (walletInfo.error) {
+        console.log('\nUnable to connect to LND node.', walletInfo.data);
+        process.exit();
+        return;
+    }
+    console.log(`\nNode found with alias: ${walletInfo.data.alias}`);
     const slashtag = await slashtagsPayServer(lnNodeResponse);
 }
 
